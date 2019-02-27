@@ -51,6 +51,7 @@ class ProjectsTest extends TestCase
 ```bash
 php artisan make:test ProjectsTest
 vendor/bin/phpunit tests/Feature/ProjectsTest.php --filter '/::a_user_can_create_a_project$/'
+vendor/bin/phpunit tests/Feature/ProjectsTest.php --filter a_user_can_create_a_project
 ```
 
 > phpunit.xml
@@ -60,6 +61,28 @@ vendor/bin/phpunit tests/Feature/ProjectsTest.php --filter '/::a_user_can_create
     <env name="DB_CONNECTION" value="sqlite"/>
     <env name="DB_DATABASE" value=":memory:"/>
 </php>
+```
+
+## 03.[Testing Request Validation](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/3)
+
+> We haven't yet written any request validation logic. As before, let's use a TDD approach for specifying each validation requirement.
+
+### Note
+
+```bash
+alias pf="vendor/bin/phpunit --filter"
+pf a_project_requires_a_title
+pf ProjectsTest
+```
+
+```bash
+php artisan make:factory ProjectFactory --model="App\Project"
+```
+
+```php
+factory('App\Project')->make();
+factory('App\Project')->make(['title' => '']);
+factory('App\Project')->raw(['title' => '']);
 ```
 
 ## [title](url)
