@@ -85,6 +85,20 @@ factory('App\Project')->make(['title' => '']);
 factory('App\Project')->raw(['title' => '']);
 ```
 
+## 04.[Model Tests](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/4)
+
+> We must next ensure that a user can visit any project page. Though we should start with a feature test, this episode will provide a nice opportunity to pause and drop down a level to a model test.
+
+### Note
+
+```bash
+php artisan make:test ProjectTest --unit
+```
+
+```php
+factory('App\Project', 5)->create();
+```
+
 ## [title](url)
 
 > 
