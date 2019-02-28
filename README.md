@@ -179,6 +179,10 @@ if (auth()->user()->isNot($project->owner)) {
 }
 ```
 
+## 07. [The Create Project View](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/7)
+
+> We already have the necessary logic to persist new projects, however, we haven't yet created the "create project" page, itself. Let's take care of that quickly in this episode.
+
 ## [title](url)
 
 > 
