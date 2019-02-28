@@ -183,6 +183,39 @@ if (auth()->user()->isNot($project->owner)) {
 
 > We already have the necessary logic to persist new projects, however, we haven't yet created the "create project" page, itself. Let's take care of that quickly in this episode.
 
+## 08. [Prepping the Frontend](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/8)
+
+> Before I begin writing CSS, we first need to set the stage. We'll begin by pulling in all necessary npm dependencies and configuring Tailwind compilation with Laravel Mix.
+
+### Note
+
+#### Tailwind
+
+```bash
+# 1. Install Tailwind via npm
+npm install tailwindcss --save-dev
+# 2. Create a Tailwind config file
+npx tailwind init
+```
+
+> webpack.mix.js
+
+```js
+require('laravel-mix-tailwind');
+
+mix.js('resources/js/app.js', 'public/js')
+   .sass('resources/sass/app.scss', 'public/css')
+   .tailwind();
+```
+
+### Reference
+
+- [Installation - Tailwind CSS](https://tailwindcss.com/docs/installation/)
+
+- [JeffreyWay/laravel-mix-tailwind: mix.tailwind()](https://github.com/JeffreyWay/laravel-mix-tailwind)
+
+<!-- - [Tailwind 是什么？ | Tailwind CSS 中文网](https://www.tailwindcss.cn/docs/what-is-tailwind/) -->
+
 ## [title](url)
 
 > 
