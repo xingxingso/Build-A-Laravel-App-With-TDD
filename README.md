@@ -99,6 +99,16 @@ php artisan make:test ProjectTest --unit
 factory('App\Project', 5)->create();
 ```
 
+> resources\views\projects\index.blade.php
+
+```php
+@forelse ($projects as $project)
+    <li><a href="{{ $project->path() }}">{{ $project->title }}</li>
+@empty
+    <li>No projects yet.</li>
+@endforelse
+```
+
 ## 05. [A Project Requires An Owner](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/5)
 
 > It's true that we can now create and persist projects to the database, but they aren't currently associated with any user. This isn't practical. To fix this, we'll write a test to confirm that the authenticated user is always assigned as the owner of any new project that is created during their session.
@@ -137,6 +147,36 @@ $this->actingAs(factory('App\User')->create());
 use Illuminate\Database\Eloquent\Collection;
 
 $this->assertInstanceOf(Collection::class, $user->projects);
+```
+
+## 06. [Scoping Projects](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/6)
+
+> In this episode, we'll continue tweaking which projects are displayed to the user. We'll also begin implementing the appropriate page authorization.
+
+### Note
+
+> tests\Feature\ProjectsTest.php
+
+```php
+$this->be(factory('App\User')->create());
+
+$this->get($project->path())->assertStatus(403);
+```
+
+> routes\web.php
+
+```php
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/projects', 'ProjectsController@index');
+});
+```
+
+> app\Http\Controllers\ProjectsController.php
+
+```php
+if (auth()->user()->isNot($project->owner)) {
+    abort(403);
+}
 ```
 
 ## [title](url)
