@@ -216,6 +216,24 @@ mix.js('resources/js/app.js', 'public/js')
 
 <!-- - [Tailwind 是什么？ | Tailwind CSS 中文网](https://www.tailwindcss.cn/docs/what-is-tailwind/) -->
 
+## 09. [Go Go Gadget Tailwind](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/9)
+
+> In this episode, we'll leverage [Tailwind](http://tailwindcss.com/) to begin constructing the Birdboard UI.
+
+### Note
+
+> resources\views\projects\index.blade.php
+
+```html
+<div>{{ Illuminate\Support\Str::limit($project->description) }}</div>
+
+<div>{{ str_limit($project->description) }}</div>
+```
+
+### Reference
+
+- [Birdboard (stage)](https://marvelapp.com/4h093if/screen/47239103)
+
 ## [title](url)
 
 > 

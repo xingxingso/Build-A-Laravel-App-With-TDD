@@ -50,8 +50,10 @@ let colors = {
   'grey-darkest': '#3d4852',
   'grey-darker': '#606f7b',
   'grey-dark': '#8795a1',
-  'grey': '#b8c2cc',
-  'grey-light': '#dae1e7',
+  // 'grey': '#b8c2cc',
+  'grey': 'rgba(0, 0, 0, 0.4)',
+  // 'grey-light': '#dae1e7',
+  'grey-light': '#F5F6F9',
   'grey-lighter': '#f1f5f8',
   'grey-lightest': '#f8fafc',
   'white': '#ffffff',
@@ -768,7 +770,8 @@ module.exports = {
   */
 
   shadows: {
-    default: '0 2px 4px 0 rgba(0,0,0,0.10)',
+    // default: '0 2px 4px 0 rgba(0,0,0,0.10)',
+    default: '0 0 5px 0 rgba(0,0,0,0.08)',
     'md': '0 4px 8px 0 rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.08)',
     'lg': '0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)',
     'inner': 'inset 0 2px 4px 0 rgba(0,0,0,0.06)',
