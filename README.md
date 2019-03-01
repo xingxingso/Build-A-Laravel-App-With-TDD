@@ -253,6 +253,50 @@ mix.js('resources/js/app.js', 'public/js')
 
 > Before we jump back to PHP, let's write one more lesson's worth of CSS. Specifically, we'll get the single project page up and running.
 
+## 12. [A Project Can Have Tasks](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/12)
+
+> We've added a section to our project page for tasks, but that functionality doesn't yet exist. It sounds like we have our next step.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/0533ad74b757f8447b6351ad62a5cd4bed569d86).
+
+### Note
+
+```bash
+php artisan make:model -m Task
+```
+
+> tests\TestCase.php
+
+```php
+public function signIn($user = null)
+{
+    $this->actingAs($user ?: factory('App\User')->create());
+}
+```
+
+> tests\Unit\ProjectTest.php
+
+```php
+/** @test */
+public function it_can_add_a_task()
+{
+    $project = factory('App\Project')->create();
+    
+    $task = $project->addTask('Test task');
+
+    $this->assertCount(1, $project->tasks);
+    $this->assertTrue($project->tasks->contains($task));
+}
+```
+
+> tests\Feature\ProjectTasksTest.php
+
+```php
+$project = auth()->user()->projects()->create(
+    factory(Project::class)->raw()
+);
+```
+
 ## [title](url)
 
 > 
