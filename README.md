@@ -238,6 +238,21 @@ mix.js('resources/js/app.js', 'public/js')
 
 > Let's continue working on the CSS for the projects dashboard. This will give us an opportunity to discuss grid spacing, and how we can use a combination of padding and negative margins to perfectly align our columns.
 
+### Note
+
+> resources\sass\app.scss
+
+```scss
+.button {
+    @apply bg-blue text-white no-underline rounded-lg text-sm py-2 px-5;
+    box-shadow: 0 2px 7px 0 #b0eaff;
+}
+```
+
+## 11. [Styling the Project Page](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/11)
+
+> Before we jump back to PHP, let's write one more lesson's worth of CSS. Specifically, we'll get the single project page up and running.
+
 ## [title](url)
 
 > 
