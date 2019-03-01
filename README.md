@@ -234,6 +234,10 @@ mix.js('resources/js/app.js', 'public/js')
 
 - [Birdboard (stage)](https://marvelapp.com/4h093if/screen/47239103)
 
+## 10. [Grid Spacing and Card Tweaks](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/10)
+
+> Let's continue working on the CSS for the projects dashboard. This will give us an opportunity to discuss grid spacing, and how we can use a combination of padding and negative margins to perfectly align our columns.
+
 ## [title](url)
 
 > 
