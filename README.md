@@ -242,7 +242,7 @@ mix.js('resources/js/app.js', 'public/js')
 
 > resources\sass\app.scss
 
-```scss
+```sass
 .button {
     @apply bg-blue text-white no-underline rounded-lg text-sm py-2 px-5;
     box-shadow: 0 2px 7px 0 #b0eaff;
@@ -295,6 +295,23 @@ public function it_can_add_a_task()
 $project = auth()->user()->projects()->create(
     factory(Project::class)->raw()
 );
+```
+
+## 13. [Task UI Updates](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/13)
+
+> The next step is to update your project page UI to allow for displaying and adding new tasks.
+
+### Note
+
+> tests\Feature\ProjectTasksTest.php
+
+```php
+# two different name
+/** @test */
+public function only_the_owner_of_a_project_may_add_tasks()
+public function adding_a_task_if_you_are_not_the_project_owner()
+
+$this->assertDatabaseMissing('tasks', ['body' => 'Test task']);
 ```
 
 ## [title](url)
