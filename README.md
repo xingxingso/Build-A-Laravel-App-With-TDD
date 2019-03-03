@@ -314,6 +314,49 @@ public function adding_a_task_if_you_are_not_the_project_owner()
 $this->assertDatabaseMissing('tasks', ['body' => 'Test task']);
 ```
 
+## 14. [Task UI Updates: Part 2](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/14)
+
+> In this episode, we'll wrap every task within a form so that we may easily update its description or completion status with the click of a button.
+
+> View the source code for this episode on [GitHub](https://github.com/laracasts/birdboard/commit/10c753148feec2430ecd2d2177c64d361cc3d343).
+
+### Note
+
+```bash
+php artisan migrate:rollback
+php artisan migrate
+```
+
+> resources\views\projects\show.blade.php
+
+```php
+<input type="checkbox" name="completed" onchange="this.form.submit()" {{ $task->completed ? 'checked' : '' }}>
+```
+
+> tests\Feature\ManageProjectsTest.php
+
+```php
+$response = $this->post('/projects', $attributes);
+// $project = Project::where($attributes)->first();
+$response->assertRedirect(Project::where($attributes)->first()->path());
+```
+
+> database\factories\TaskFactory.php
+
+```php
+'project_id' => factory(\App\Project::class)
+// 'project_id' => function () {
+//     return factory(\App\Project::class)->create()->id;
+// }
+```
+
+> database\migrations\2019_03_01_074823_create_tasks_table.php
+
+```php
+$table->timestamp('completed')->default(false);
+$table->boolean('completed')->default(false);
+```
+
 ## [title](url)
 
 > 
