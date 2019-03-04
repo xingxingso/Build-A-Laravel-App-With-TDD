@@ -357,6 +357,25 @@ $table->timestamp('completed')->default(false);
 $table->boolean('completed')->default(false);
 ```
 
+## 15. [Touch It](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/15)
+
+> I'd like to sort all projects in our dashboard according to those that have been most recently updated. This means, when you add or modify a task within a project, we need to touch the parent project's `updated_at` timestamp in the process. Let's learn how in this episode.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/2192501f311626560eaf55362e55cde5542abb05).
+
+### Note
+
+> app\Task.php
+
+```php
+protected $touches = ['project'];
+
+public function project()
+{
+    return $this->belongsTo(Project::class);
+}
+```
+
 ## [title](url)
 
 > 
