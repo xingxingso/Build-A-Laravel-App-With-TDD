@@ -376,6 +376,45 @@ public function project()
 }
 ```
 
+## 16. [Notes and Policies](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/16)
+
+> Next up, we need to make the "General Notes" section of the project page dynamic. As always, we'll use tests to drive this new update. When finished, we'll also switch over to using dedicated authorization policy classes.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/40afb9c6138578ee22623d3806d398d84fcf1a1b).
+
+### Note
+
+```bash
+php artisan make:policy ProjectPolicy
+```
+
+> app\Policies\ProjectPolicy.php
+
+```php
+public function update(User $user, Project $project)
+{
+    return $user->is($project->owner);
+}
+```
+
+> app\Providers\AuthServiceProvider.php
+
+```php
+protected $policies = [
+    'App\Project' => 'App\Policies\ProjectPolicy',
+];
+```
+
+> app\Http\Controllers\ProjectsController.php
+
+```php
+$this->authorize('update', $project);
+```
+
+### Reference
+
+> If you want to apply the fixes to the forms that Jeff has applied "behind the scenes", you'll find all the changes in [this commit](https://github.com/laracasts/birdboard/commit/0ac821b456e599a9c7a8ff3ec7327202c88c6516).
+
 ## [title](url)
 
 > 

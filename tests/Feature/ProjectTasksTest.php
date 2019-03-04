@@ -15,8 +15,7 @@ class ProjectTasksTest extends TestCase
     {
         $project = factory('App\Project')->create();
 
-        $this->post($project->path() . '/tasks')
-             ->assertRedirect('login');
+        $this->post($project->path() . '/tasks')->assertRedirect('login');
     }
 
     /** @test */
