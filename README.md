@@ -415,6 +415,88 @@ $this->authorize('update', $project);
 
 > If you want to apply the fixes to the forms that Jeff has applied "behind the scenes", you'll find all the changes in [this commit](https://github.com/laracasts/birdboard/commit/0ac821b456e599a9c7a8ff3ec7327202c88c6516).
 
+## 17. [Improve Test Arrangements With Factory Classes](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/17)
+
+> Let's take a moment to improve the structure of our tests. Have you noticed that, time and time again, we follow a similar pattern when arranging the world for a test? Instead, let's refactor this code into a fluent factory class to save time. To do this, we'll use a technique that I first learned from John Bonaccorsi in his [Tidy up Your Tests with Class-Based Model Factories](https://tighten.co/blog/tidy-up-your-tests-with-class-based-model-factories) article. I encourage you to give it a read if you'd like to learn more.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/9b18bb34afafbe61116a43d407feadf47be75680).
+
+### Note
+
+> tests\Setup\ProjectFactory.php
+
+```php
+<?php  
+
+namespace Tests\Setup;
+
+use App\Project;
+use App\User;
+use App\Task;
+
+class ProjectFactory
+{
+    protected $tasksCount = 0;
+
+    protected $user;
+
+    public function withTasks($tasksCount)
+    {
+        $this->tasksCount = $tasksCount;
+
+        return $this;
+    }
+
+    public function ownedBy($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function create()
+    {
+        $project = factory(Project::class)->create([
+            'owner_id' => $this->user ?? factory(User::class)
+        ]);
+
+        factory(Task::class, $this->tasksCount)->create([
+            'project_id' => $project->id
+        ]);
+
+        return $project;
+    }
+}
+```
+
+> tests\Feature\ProjectTasksTest.php
+
+```php
+use Tests\Setup\ProjectFactory;
+
+$project = app(ProjectFactory::class)
+    // ->ownedBy($this->signIn())
+    ->withTasks(1)
+    ->create();
+
+$this->actingAs($project->owner)
+// $this
+    ->patch($project->tasks[0]->path(), [
+    'body' => 'changed',
+    'completed' => true
+]);
+```
+
+```php
+use Facades\Tests\Setup\ProjectFactory;
+
+$project = ProjectFactory::withTasks(1)->create();
+```
+
+### Reference
+
+- [Tidy up Your Tests with Class-Based Model Factories | Tighten](https://tighten.co/blog/tidy-up-your-tests-with-class-based-model-factories)
+
 ## [title](url)
 
 > 
