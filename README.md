@@ -497,6 +497,41 @@ $project = ProjectFactory::withTasks(1)->create();
 
 - [Tidy up Your Tests with Class-Based Model Factories | Tighten](https://tighten.co/blog/tidy-up-your-tests-with-class-based-model-factories)
 
+## 18. [Reduce Form Duplication](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/18)
+
+> In this lesson, we'll add a form to update an existing project. But in the process, we'll review how to reduce duplication in the `create` and `edit` views by extracting a reusable partial.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/1320ddc80709341708222e3ee330eaa96df7ba61).
+
+### Note
+
+> tests\Feature\ManageProjectsTest.php
+
+```php
+$this->get($project->path() . '/edit')->assertOk();
+```
+
+> resources\views\projects\create.blade.php
+
+```php
+@include ('projects.form', [
+    'project' => new App\Project,
+    'buttonText' => 'Create Project'
+])
+```
+
+> resources\views\projects\form.blade.php
+
+```php
+@if ($errors->any())
+    <div class="field mt-6">
+        @foreach ($errors->all() as $error)
+            <li class="text-sm text-red">{{ $error }}</li>
+        @endforeach
+    </div>
+@endif
+```
+
 ## [title](url)
 
 > 
