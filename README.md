@@ -532,6 +532,137 @@ $this->get($project->path() . '/edit')->assertOk();
 @endif
 ```
 
+## 19. [Sometimes Validation With Form Requests](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/19)
+
+> We'll begin this episode by addressing a small regression that was introduced in the previous episode: we can no longer update the general notes without triggering a validation error. While of course we'll review the easy solution to this issue, we'll additionally discuss a recent user comment related to the pros and cons of extracting a form request class. Would it make the code cleaner or better? You can look forward to lots of fun tips in this episode.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/47adf5523b17c4993d337a0ad15f4adfcba681e8).
+
+### Note
+
+```bash
+php artsian make:request UpdateProjectRequest
+```
+
+> app\Http\Requests\UpdateProjectRequest.php
+
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use App\Project;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+
+class UpdateProjectRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        // return Gate::allows('update', $this->route('project'));
+        return Gate::allows('update', $this->project());
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'title' => 'sometimes|required', 
+            'description' => 'sometimes|required',
+            'notes' => 'nullable'
+        ];
+    }
+
+    public function project()
+    {
+        // return $this->route('project');
+
+        // dd(Project::findOrFail($this->route('project')));
+        // dd($this->route('project'));
+
+        // use this `Project::findOrFail($this->route('project'))` will cann't use `public function update(UpdateProjectRequest $request, Project $project)` in controller, if, 403 will response.
+        // because if in the parameters has `Project $project`,
+        // `Project::findOrFail($this->route('project'))` will return array
+        // if not, `$this->route('project')` will be "1" (the id of table projects)
+        // and `Project::findOrFail($this->route('project'))` will be an object of database collection
+        return Project::findOrFail($this->route('project'));
+    }
+
+    public function save()
+    {
+        // $this->project()->update($this->validated());
+
+        // $project = $this->project();
+
+        // $project->update($this->validated());
+
+        // return $project;
+
+        return tap($this->project())->update($this->validated());
+    }
+}
+```
+
+> app\Http\Controllers\ProjectsController.php
+
+>> 1.validate and update in one class
+
+```php
+<?php
+public function update(Project $project)
+{
+    $this->authorize('update', $project);     
+    $project->update($this->validateRequest());
+    return redirect($project->path());
+}
+
+protected function validateRequest()
+{
+    return request()->validate([
+        'title' => 'sometimes|required', 
+        'description' => 'sometimes|required',
+        'notes' => 'nullable'
+    ]);
+}
+```
+
+>> 2.use `UpdateProjectRequest` validate
+
+```php
+<?php
+public function update(UpdateProjectRequest $request, Project $project)
+{
+    $project->update($request->validated());
+    return redirect($project->path());
+}
+```
+
+>> 3.use `UpdateProjectRequest` validate and save
+
+```php
+<?php
+// public function update(UpdateProjectRequest $request, Project $project)
+// public function update(UpdateProjectRequest $request)
+public function update(UpdateProjectRequest $form)
+{    
+    // $request->save();
+
+    // return redirect($project->path());
+    // return redirect($request->project()->path());
+    return redirect($form->save()->path());
+}
+
+```
+
 ## [title](url)
 
 > 

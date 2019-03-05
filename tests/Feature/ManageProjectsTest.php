@@ -47,8 +47,6 @@ class ManageProjectsTest extends TestCase
 
         $response->assertRedirect($project->path());
 
-        // $this->assertDatabaseHas('projects', $attributes);
-
         $this->get($project->path())
              ->assertSee($attributes['title'])
              ->assertSee($attributes['description'])
@@ -67,6 +65,17 @@ class ManageProjectsTest extends TestCase
         $this->get($project->path() . '/edit')->assertOk();
 
         $this->assertDatabaseHas('projects', $attributes);
+    }
+
+    /** @test */
+    public function a_user_can_update_a_project_general_notes()
+    {
+        $project = ProjectFactory::create();
+
+        $this->actingAs($project->owner)
+            ->patch($project->path(), $attributes = ['notes' => 'Changed']);
+            
+        $this->assertDatabaseHas('projects', $attributes);   
     }
 
     /** @test */

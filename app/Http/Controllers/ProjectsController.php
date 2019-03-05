@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Project;
+use App\Http\Requests\UpdateProjectRequest;
 
 class ProjectsController extends Controller
 {
     public function index()
     {
         $projects = auth()->user()->projects;
-        // $projects = auth()->user()->projects()->orderBy('updated_at', 'desc')->get();
 
         return view('projects.index', compact('projects'));   
     }
@@ -31,8 +31,6 @@ class ProjectsController extends Controller
     public function store()
     {
         // validate
-        // $attributes = $this->validateRequest();
-
         // persist
         $project = auth()->user()->projects()->create($this->validateRequest());
 
@@ -45,23 +43,37 @@ class ProjectsController extends Controller
         return view('projects.edit', compact('project'));
     }
 
-    public function update(Project $project)
-    {
-        $this->authorize('update', $project);
-            
-        // $attributes = $this->validateRequest();
+    // public function update(Project $project)
+    // {
+    //     $this->authorize('update', $project);     
+    //     $project->update($this->validateRequest());
+    //     return redirect($project->path());
+    // }
 
-        $project->update($this->validateRequest());
+    // public function update(UpdateProjectRequest $request, Project $project)
+    // {
+    //     $project->update($request->validated());
+    //     return redirect($project->path());
+    // }
 
-        return redirect($project->path());
+    // public function update(UpdateProjectRequest $request, Project $project)
+    // public function update(UpdateProjectRequest $request)
+    public function update(UpdateProjectRequest $form)
+    {    
+        // $request->save();
+
+        // return redirect($project->path());
+        // return redirect($request->project()->path());
+        return redirect($form->save()->path());
     }
 
-    public function validateRequest()
+    protected function validateRequest()
     {
         return request()->validate([
-            'title' => 'required', 
-            'description' => 'required',
-            'notes' => 'min:3'
+            'title' => 'sometimes|required', 
+            'description' => 'sometimes|required',
+            // 'notes' => 'min:3'
+            'notes' => 'nullable'
         ]);
     }
 }
