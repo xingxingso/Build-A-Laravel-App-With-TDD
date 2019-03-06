@@ -337,7 +337,6 @@ php artisan migrate
 
 ```php
 $response = $this->post('/projects', $attributes);
-// $project = Project::where($attributes)->first();
 $response->assertRedirect(Project::where($attributes)->first()->path());
 ```
 
@@ -660,8 +659,67 @@ public function update(UpdateProjectRequest $form)
     // return redirect($request->project()->path());
     return redirect($form->save()->path());
 }
-
 ```
+
+## 20. [Project Activity Feeds](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/20)
+
+> Let's move on to our next feature: every project generates an activity feed.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/1a0bb81b22606ce386eb9e7a33fdb02e74119ae3).
+
+### Note
+
+```bash
+php artisan make:observer ProjectObserver --model=Project
+```
+
+> app\Providers\AppServiceProvider.php
+
+```php
+public function boot()
+{
+    Project::observe(ProjectObserver::class);
+}
+```
+
+> routes\web.php
+
+```php
+// \App\Project::created(function ($project) {
+//     \App\Activity::create([
+//         'project_id' => $project->id,
+//         'description' => 'Created'
+//     ]);
+// });
+```
+
+## References
+
+### [Testing](https://laravel.com/docs/5.8/testing)
+
+### [blade](https://laravel.com/docs/5.8/blade)
+
+### [factory](https://laravel.com/docs/5.8/database-testing)
+
+### [migrations](https://laravel.com/docs/5.8/migrations)
+
+### [mix](https://laravel.com/docs/5.8/mix)
+
+### [eloquent-relationships](https://laravel.com/docs/5.8/eloquent-relationships)
+
+### [touch](https://laravel.com/docs/5.8/eloquent-relationships#touching-parent-timestamps)
+
+### [policy](https://laravel.com/docs/5.8/authorization#creating-policies)
+
+### [validation](https://laravel.com/docs/5.8/validation)
+
+### [Form Request Validation](https://laravel.com/docs/5.8/validation#form-request-validation)
+
+### [Facades](https://laravel.com/docs/5.8/facades)
+
+### [Gate](https://laravel.com/docs/5.8/authorization#gates)
+
+### [Observer](https://laravel.com/docs/5.8/eloquent#observers)
 
 ## [title](url)
 
