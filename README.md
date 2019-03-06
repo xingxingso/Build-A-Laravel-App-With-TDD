@@ -693,6 +693,60 @@ public function boot()
 // });
 ```
 
+## 21. [Project Activity Feeds: Part 2](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/21)
+
+> Let's continue working on the project activity feature. We should additionally record activity when a task is created or completed. Let's take care of that in this episode.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/1ab3d0663eb7188396810c804405c2a15f8d5389).
+
+### Note
+
+> app\Task.php
+
+```php
+protected $casts = [
+    'completed' => 'boolean'
+];
+
+protected static function boot()
+{
+    parent::boot();
+
+    static::created(function ($task) {
+        $task->project->recordActivity('created_task');
+    });
+
+    // static::updated(function ($task) {
+    //     if (! $task->completed) return;
+    //     $task->project->recordActivity('completed_task');
+    // });
+}
+
+public function complete()
+{
+    $this->update(['completed' => true]);
+
+    $this->project->recordActivity('completed_task');
+}
+```
+
+> tests\Unit\TaskTest.php
+
+```php
+/** @test */
+public function it_can_be_completed()
+{
+    $task = factory(Task::class)->create();
+
+    $this->assertFalse($task->completed);
+    
+    $task->complete();
+
+    // $this->assertEquals(true, $task->fresh()->completed);
+    $this->assertTrue($task->fresh()->completed);
+}
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)
@@ -720,6 +774,8 @@ public function boot()
 ### [Gate](https://laravel.com/docs/5.8/authorization#gates)
 
 ### [Observer](https://laravel.com/docs/5.8/eloquent#observers)
+
+### [casts](https://laravel.com/docs/5.8/eloquent-mutators#attribute-casting)
 
 ## [title](url)
 

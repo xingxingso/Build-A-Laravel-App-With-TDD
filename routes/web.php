@@ -1,19 +1,5 @@
 <?php
 
-// \App\Project::created(function ($project) {
-//     \App\Activity::create([
-//         'project_id' => $project->id,
-//         'description' => 'Created'
-//     ]);
-// });
-
-// \App\Project::updated(function ($project) {
-//     \App\Activity::create([
-//         'project_id' => $project->id,
-//         'description' => 'Updated'
-//     ]);
-// });
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
