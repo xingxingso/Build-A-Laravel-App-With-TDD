@@ -30,23 +30,16 @@ class Project extends Model
 
     public function addTask($body)
     {
-        // $task = $this->tasks()->create(compact('body'));
-
-        // Activity::create([
-        //     'project_id' => $this->id,
-        //     'description' => 'created_task'
-        // ]);
-
-        // return $task;
-
         return $this->tasks()->create(compact('body'));
     }
 
-    public function recordActivity($type)
+    public function recordActivity($description)
     {
-        Activity::create([
-            'project_id' => $this->id,
-            'description' => $type
-        ]);
+        // Activity::create([
+        //     'project_id' => $this->id,
+        //     'description' => $description
+        // ]);
+
+        $this->activity()->create(compact('description'));
     }
 }

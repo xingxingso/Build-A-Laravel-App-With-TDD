@@ -747,6 +747,36 @@ public function it_can_be_completed()
 }
 ```
 
+## 22. [Project Activity Feeds: Part 3](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/22)
+
+> Before moving on to the larger activity feed refactor, let's first make a few small tweaks to clean things up.
+
+> View the completed source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/d2e4e82eb0855483fcd6437d0caceed2a1eaf9b6).
+
+### Note
+
+> app\Project.php
+
+```php
+public function recordActivity($description)
+{
+    // Activity::create([
+    //     'project_id' => $this->id,
+    //     'description' => $description
+    // ]);
+
+    $this->activity()->create(compact('description'));
+}
+```
+
+> app\Http\Controllers\ProjectTasksController.php
+
+```php
+$method = request('completed') ? 'complete' : 'incomplete';
+// $task->{$method}();
+$task->$method();
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)
