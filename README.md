@@ -777,6 +777,142 @@ $method = request('completed') ? 'complete' : 'incomplete';
 $task->$method();
 ```
 
+## 23. [Project Activity Feeds: Cleanup](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/23)
+
+> We have just a few loose ends to wrap up, before finally viewing the project's activity feed in the browser.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/50322ddffdd5e71c241e7e816553902b0abe639d).
+
+### Note
+
+> tests\Feature\TriggerActivityTest.php
+
+```php
+/** @test */
+public function incompleting_a_task()
+{
+    $project = ProjectFactory::withTasks(1)->create();
+
+    $this->actingAs($project->owner)
+        ->patch($project->tasks[0]->path(), [
+            'body' => 'foobar',
+            'completed' => true
+        ]);
+
+    $this->assertCount(3, $project->activity);
+
+    $this->patch($project->tasks[0]->path(), [
+        'body' => 'foobar',
+        'completed' => false
+    ]);
+
+    // dd($project->fresh()->activity->toArray());
+    // $project = $project->fresh();
+    $project->refresh();
+
+    // $this->assertCount(4, $project->fresh()->activity);
+    $this->assertCount(4, $project->activity);
+
+    // $this->assertEquals('incompleted_task', $project->fresh()->activity->last()->description);
+    $this->assertEquals('incompleted_task', $project->activity->last()->description);
+}
+```
+
+> app\TriggersActivity.php
+
+```php
+<?php
+/**
+ * if use it currently, the tests will not work.
+ * you should change the `description` like 'created_project',
+ * on `task`, should add `task_id` or change the method `activity`.
+ */
+
+namespace App;
+
+trait TriggersActivity
+{
+    /**
+     * Boot the trait.
+     * named boot[TraitName], 
+     * it will be executed as the boot() function would on an Eloquent model.
+     */
+    // protected static function bootRecordsActivity() //didn't work `boot[TraitName]`
+    protected static function bootTriggersActivity()
+    {
+        foreach (static::getModelEventsToRecord() as $event) {
+            static::$event(function ($model) use ($event) {
+                $model->recordActivity(
+                    $model->formatActivityDescription($event)
+                );
+            });
+        }
+    }
+
+    /**
+     * Record activity for the model.
+     * 
+     * @param   [type]     $description [description]
+     */
+    public function recordActivity($description)
+    {     
+        $this
+            ->activitySubject()
+            ->activity()
+            ->create(compact('description'));
+    }
+
+    /**
+     * The activity feed for the project.
+     * 
+     * @return  [type]     [description]
+     */
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);   
+    }
+
+    /**
+     * Get the subject for the activity recording
+     * 
+     * @return  $this
+     */
+    protected function activitySubject()
+    {
+        return $this;
+    }
+
+    /**
+     * Get the model events that should trigger activity recording.
+     * 
+     * @return  [type]     [description]
+     */
+    protected static function getModelEventsToRecord()
+    {
+        if (isset(static::$modelEventsToRecord)) {
+            return static::$modelEventsToRecord;
+        }
+
+        return ['created', 'updated', 'deleted'];
+    }
+
+    /**
+     * Format the activity description.
+     *
+     * @param string $event
+     * @return string
+     */
+    protected function formatActivityDescription($event)
+    {
+        return "{$event}_" . strtolower(class_basename($this));
+    }
+}
+```
+
+### Reference
+
+- [Booting Eloquent Model Traits | The Blog | archybold.com](https://www.archybold.com/blog/post/booting-eloquent-model-traits)
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)

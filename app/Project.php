@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    // use TriggersActivity;
+
     protected $guarded = [];
 
     public function path()
@@ -35,11 +37,6 @@ class Project extends Model
 
     public function recordActivity($description)
     {
-        // Activity::create([
-        //     'project_id' => $this->id,
-        //     'description' => $description
-        // ]);
-
         $this->activity()->create(compact('description'));
     }
 }
