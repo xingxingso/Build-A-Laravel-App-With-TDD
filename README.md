@@ -913,6 +913,25 @@ trait TriggersActivity
 
 - [Booting Eloquent Model Traits | The Blog | archybold.com](https://www.archybold.com/blog/post/booting-eloquent-model-traits)
 
+## 24. [Rendering Activity With Polymorphism](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/24)
+
+> It's time to render a project's activity feed on the page. This will give us an opportunity to review how to use polymorphism to load the appropriate view, based on the description type of the activity.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/c2bc7499a4cbca265ed393f456f0752c623dfb02).
+
+### Note
+
+> resources\views\projects\activity\card.blade.php
+
+```php
+@foreach ($project->activity as $activity)
+    <li class="{{ $loop->last ? '' : 'mb-1' }}">                                
+        @include ("projects.activity.{$activity->description}")
+        <span class="text-grey">{{ $activity->created_at->diffForHumans(null, true) }}</span>
+    </li>
+@endforeach
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)
