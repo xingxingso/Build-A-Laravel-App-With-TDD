@@ -25,11 +25,6 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function activity()
-    {
-        return $this->hasMany(Activity::class)->latest();
-    }
-
     public function addTask($body)
     {
         return $this->tasks()->create(compact('body'));
@@ -38,5 +33,10 @@ class Project extends Model
     public function recordActivity($description)
     {
         $this->activity()->create(compact('description'));
+    }
+
+    public function activity()
+    {
+        return $this->hasMany(Activity::class)->latest();
     }
 }

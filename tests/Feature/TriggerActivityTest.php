@@ -39,10 +39,17 @@ class TriggerActivityTest extends TestCase
     {
         $project = ProjectFactory::create();
 
-        $project->addTask('Test task');
+        $project->addTask('Some task');
 
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('created_task', $project->activity->last()->description);
+        // $this->assertEquals('created_task', $project->activity->last()->description);
+
+        tap($project->activity->last(), function ($activity) {
+            // dd($activity->toArray());
+            $this->assertEquals('created_task', $activity->description);        
+            $this->assertInstanceOf('App\Task', $activity->subject);
+            $this->assertEquals('Some task', $activity->subject->body);        
+        });
     }
 
     /** @test */
@@ -57,8 +64,12 @@ class TriggerActivityTest extends TestCase
             ]);
 
         $this->assertCount(3, $project->activity);
+        // $this->assertEquals('completed_task', $project->activity->last()->description);
 
-        $this->assertEquals('completed_task', $project->activity->last()->description);
+        tap($project->activity->last(), function ($activity) {
+            $this->assertEquals('completed_task', $activity->description);
+            $this->assertInstanceOf('App\Task', $activity->subject);
+        });
     }
 
     /** @test */
@@ -79,14 +90,10 @@ class TriggerActivityTest extends TestCase
             'completed' => false
         ]);
 
-        // dd($project->fresh()->activity->toArray());
-        // $project = $project->fresh();
         $project->refresh();
 
-        // $this->assertCount(4, $project->fresh()->activity);
         $this->assertCount(4, $project->activity);
 
-        // $this->assertEquals('incompleted_task', $project->fresh()->activity->last()->description);
         $this->assertEquals('incompleted_task', $project->activity->last()->description);
     }
 
@@ -95,8 +102,6 @@ class TriggerActivityTest extends TestCase
     {
         $project = ProjectFactory::withTasks(1)->create();
                 
-        // $this->assertCount(2, $project->activity);
-
         $project->tasks[0]->delete();
 
         $this->assertCount(3, $project->fresh()->activity);

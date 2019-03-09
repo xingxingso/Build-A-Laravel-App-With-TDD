@@ -932,6 +932,52 @@ trait TriggersActivity
 @endforeach
 ```
 
+## 25. [The Subject of the Activity](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/25)
+
+> Now that we're successfully displaying a project's activity feed on the page, I'd like to provide more information for each update. For example, rather than the message, "You completed a task", it should probably include the name of the task: 'You completed "Finish Lesson"'. This presents a problem because, when we record activity, we don't yet include any reference to the subject. Let's fix that in this episode.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/baa2bd53a1456686e75f4c24b523df7c7ef0da81).
+
+### Note
+
+> tests\Feature\TriggerActivityTest.php
+
+```php
+tap($project->activity->last(), function ($activity) {
+    // dd($activity->toArray());
+    $this->assertEquals('created_task', $activity->description);        
+    $this->assertInstanceOf('App\Task', $activity->subject);
+    $this->assertEquals('Some task', $activity->subject->body);        
+});
+```
+
+> database\migrations\2019_03_06_062348_create_activities_table.php
+
+```php
+// $table->morphs('subject');
+$table->nullableMorphs('subject');
+// $table->unsignedInteger('subject_id'); // 9
+// $table->string('subject_type');  // App\Task
+```
+
+> app\Task.php
+
+```php
+public function activity()
+{
+    return $this->morphMany(Activity::class, 'subject')->latest();
+}
+```
+
+> app\Activity.php
+
+```php
+public function subject()
+{
+    return $this->morphTo();
+}
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)
@@ -962,6 +1008,8 @@ trait TriggersActivity
 
 ### [casts](https://laravel.com/docs/5.8/eloquent-mutators#attribute-casting)
 
+### [polymorphic-relationships](https://laravel.com/docs/5.8/eloquent-relationships#polymorphic-relationships)
+
 ## [title](url)
 
 > 
@@ -969,3 +1017,5 @@ trait TriggersActivity
 ### Note
 
 ### Reference
+
+## References

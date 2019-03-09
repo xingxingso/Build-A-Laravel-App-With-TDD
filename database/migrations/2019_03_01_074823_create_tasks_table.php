@@ -17,7 +17,6 @@ class CreateTasksTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('project_id');
             $table->text('body');
-            // $table->timestamp('completed')->default(false);
             $table->boolean('completed')->default(false);
             $table->timestamps();
         });
