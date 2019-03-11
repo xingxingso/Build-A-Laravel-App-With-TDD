@@ -978,6 +978,36 @@ public function subject()
 }
 ```
 
+## 26. [Recording Model Changes](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/26)
+
+> Our next job is to track which attributes have changed when a model is updated. This will allow us to record, for example, that the user changed the title of the project from "Test Project" to "Real Project".
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/0212f60a73a1b110a4dbd5c4e041918fb2126e53).
+
+### Note
+
+> app\Project.php
+
+```php
+public function recordActivity($description)
+{
+    $this->activity()->create([
+        'description' => $description,
+        'changes' => $this->activityChanges($description)
+    ]);
+}
+
+public function activityChanges($description)
+{
+    if ($description === 'updated') {
+        return [
+            'before' => array_except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+            'after' => array_except($this->getChanges(), 'updated_at')
+        ];
+    }
+}
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)
