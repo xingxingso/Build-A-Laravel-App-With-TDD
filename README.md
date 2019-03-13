@@ -986,6 +986,15 @@ public function subject()
 
 ### Note
 
+> app\Observers\ProjectObserver.php
+
+```php
+public function updating(Project $project)
+{
+    $project->old = $project->getOriginal();
+}
+```
+
 > app\Project.php
 
 ```php
@@ -1004,6 +1013,109 @@ public function activityChanges($description)
             'before' => array_except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
             'after' => array_except($this->getChanges(), 'updated_at')
         ];
+    }
+}
+```
+
+> tests\Feature\TriggerActivityTest.php
+
+```php
+/** @test */
+public function updating_a_project()
+{
+    $project = ProjectFactory::create();
+
+    $originalTitle = $project->title;
+
+    $project->update(['title' => 'Changed']);
+
+    $this->assertCount(2, $project->activity);
+
+    tap($project->activity->last(), function ($activity) use ($originalTitle) {
+        $this->assertEquals('updated', $activity->description);
+
+        $expected = [
+            'before' => ['title' => $originalTitle],
+            'after' => ['title' => 'Changed']
+        ];
+        $this->assertEquals($expected, $activity->changes);
+    });
+}
+```
+
+## 27. [Get Into The Refactor Flow](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/27)
+
+> In this episode, we'll refactor all "activity" functionality to a reusable trait. As you'll see, we'll quickly fall into a rapid refactor flow: make a small tweak, run the tests, see green, make another small tweak, rinse and repeat.
+
+### Note
+
+> app\RecordsActivity.php
+
+```php  
+<?php  
+
+namespace App;
+
+/**
+* record activity trait
+*/
+trait RecordsActivity
+{
+    public $oldAttributes = [];
+
+    /**
+     * [boot the trait]
+     */
+    public static function bootRecordsActivity()
+    {
+        foreach (static::recordableEvents() as $event) { 
+            static::$event(function ($model) use ($event) {
+                $model->recordActivity($model->activityDescription($event));
+            });
+
+            if ($event === 'updated') {
+                static::updating(function ($model) {
+                    $model->oldAttributes = $model->getOriginal();
+                });
+            }
+        }
+    }
+
+    protected function activityDescription($description)
+    {
+        return "${description}_" . strtolower(class_basename($this));    
+    }
+
+    protected static function recordableEvents()
+    {
+        if (isset(static::$recordableEvents)) {
+            return static::$recordableEvents;
+        } 
+        return ['created', 'updated', 'deleted'];
+    }
+
+    public function recordActivity($description)
+    {
+        $this->activity()->create([
+            'description' => $description,
+            'changes' => $this->activityChanges($description),
+            'project_id' => class_basename($this)==='Project' ? $this->id : $this->project_id
+        ]);
+    }
+
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'subject')->latest();
+    }
+
+    public function activityChanges()
+    {
+        if ($this->wasChanged()) {
+            return [
+                'before' => array_except(array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'),
+                'after' => array_except($this->getChanges(), 'updated_at')
+            ];
+        }
     }
 }
 ```
