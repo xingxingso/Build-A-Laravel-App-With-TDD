@@ -1120,6 +1120,35 @@ trait RecordsActivity
 }
 ```
 
+## 28. [Tweaking the Activity Card](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/28)
+
+> Let's work on tweaking the output of the activity card in this lesson. I'd like it to show which fields were updated, and who performed the update.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/ad4611794b0e602e5cf47d165e7af54bb93d2d46).
+
+### Note
+
+```bash
+$ php artisan migrate:refresh
+```
+
+> tests\Unit\ActivityTest.php
+
+```php
+/** @test */
+public function it_has_a_user()
+{
+    $user = $this->signIn();
+
+    // $project = factory(Project::class)->create();
+    $project = ProjectFactory::ownedBy($user)->create();
+
+    // $this->assertInstanceOf(User::class, $project->activity->first()->user);
+
+    $this->assertEquals($user->id, $project->activity->first->user->id);
+}
+```
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)

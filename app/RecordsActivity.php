@@ -14,21 +14,8 @@ trait RecordsActivity
      */
     public static function bootRecordsActivity()
     {
-        // if (isset(static::$recordableEvents)) {
-        //     $recordableEvents = static::$recordableEvents;
-        // } else {
-        //     $recordableEvents = ['created', 'updated', 'deleted'];
-        // }
-
-        // foreach ($recordableEvents as $event) {
         foreach (static::recordableEvents() as $event) { 
             static::$event(function ($model) use ($event) {
-                // $description = $event;
-                // if (class_basename($model) !== 'Project') {
-                //     $description = $event . '_' . strtolower(class_basename($model));
-                // }
-
-                // $model->recordActivity($description);
                 $model->recordActivity($model->activityDescription($event));
             });
 
@@ -42,11 +29,6 @@ trait RecordsActivity
 
     protected function activityDescription($description)
     {
-        // if (class_basename($this) !== 'Project') {
-        //     return "${description}_" . strtolower(class_basename($this));
-        // }
-        // return $description;
-
         return "${description}_" . strtolower(class_basename($this));    
     }
 
@@ -61,11 +43,32 @@ trait RecordsActivity
     public function recordActivity($description)
     {
         $this->activity()->create([
+            // 'user_id' => $this->owner_id,
+            // 'user_id' => auth()->id(),
+            // 'user_id' => $this->activityOwner()->id,
+            'user_id' => ($this->project ?? $this)->owner->id,
             'description' => $description,
             'changes' => $this->activityChanges($description),
             'project_id' => class_basename($this)==='Project' ? $this->id : $this->project_id
         ]);
     }
+
+    // protected function activityOwner()
+    // {
+    //     // if (auth()->check()) {
+    //     //     return auth()->user();
+    //     // }
+
+    //     // if (class_basename($this) === 'Project') {
+    //     //     return $this->owner;
+    //     // }
+
+    //     // $project = $this->project ?? $this;
+
+    //     // return $project->owner;
+
+    //     return ($this->project ?? $this)->owner;
+    // }
 
     public function activity()
     {
