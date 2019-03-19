@@ -1149,6 +1149,32 @@ public function it_has_a_user()
 }
 ```
 
+## 29. [Authorized Users Can Delete Projects](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/29)
+
+> We have an easy one this episode: users who have the proper permissions may delete or archive projects. Let's knock that out now, before moving on to something more exciting in the next episode.
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/a9131be0775430bbad1dd81447398ad4266fe918).
+
+
+### Note
+
+> tests\Feature\ManageProjectsTest.php
+
+```php
+$this->assertDatabaseMissing('projects', $project->only('id'));
+```
+
+> routes\web.php
+
+```php
+Route::resource('projects', 'ProjectsController');
+```
+
+```bash
+$ php artisan route:list
+```
+
+
 ## References
 
 ### [Testing](https://laravel.com/docs/5.8/testing)

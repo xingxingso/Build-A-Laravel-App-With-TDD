@@ -29,8 +29,6 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_user_can_create_a_project()
     {   
-        // $this->withoutExceptionHandling();
-
         $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
@@ -51,6 +49,37 @@ class ManageProjectsTest extends TestCase
              ->assertSee($attributes['title'])
              ->assertSee($attributes['description'])
              ->assertSee($attributes['notes']);
+    }
+
+    /** @test */
+    public function unauthorized_users_cannot_delete_a_project()
+    // public function guests_cannot_delete_a_project()
+    {   
+        $project = ProjectFactory::create();
+
+        $this->delete($project->path())
+             ->assertRedirect('/login');
+
+        $this->signIn();
+
+        $this->delete($project->path())
+             ->assertStatus(403);
+    }
+
+    /** @test */
+    public function a_user_can_delete_a_project()
+    {   
+        // $this->withoutExceptionHandling();
+
+        $project = ProjectFactory::create();
+
+        $this->actingAs($project->owner)
+            ->delete($project->path())
+            ->assertRedirect('/projects');
+
+        // $project->exists...
+        // $project->fresh();
+        $this->assertDatabaseMissing('projects', $project->only('id'));
     }
 
     /** @test */
@@ -81,12 +110,6 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_user_can_view_their_project()
     {
-        // $this->signIn();
-
-        // $this->withoutExceptionHandling();
-
-        // $project = factory('App\Project')->create(['owner_id'=>auth()->id()]);
-
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)
@@ -98,10 +121,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function an_authenticated_user_cannot_view_the_projects_of_others()
     {
-        // $this->be(factory('App\User')->create());
         $this->signIn();
-
-        // $this->withoutExceptionHandling();
 
         $project = factory('App\Project')->create();
 
@@ -121,7 +141,6 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_title()
     {
-        // $this->actingAs(factory('App\User')->create());
         $this->signIn();
 
         $attributes = factory('App\Project')->raw(['title' => '']); 
@@ -132,7 +151,6 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_description()
     {
-        // $this->actingAs(factory('App\User')->create());
         $this->signIn();
 
         $attributes = factory('App\Project')->raw(['description' => '']); 
