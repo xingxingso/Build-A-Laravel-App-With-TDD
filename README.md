@@ -198,6 +198,10 @@ npm install tailwindcss --save-dev
 npx tailwind init
 ```
 
+```bash
+npm install laravel-mix-tailwind --save-dev
+```
+
 > webpack.mix.js
 
 ```js
@@ -1174,6 +1178,73 @@ Route::resource('projects', 'ProjectsController');
 $ php artisan route:list
 ```
 
+## 30. [Layered Tests and Invitations](https://laracasts.com/series/build-a-laravel-app-with-tdd/episodes/30)
+
+> As we move on to inviting users to projects, this will give us a nice opportunity to discuss layered tests. In this episode, we'll write the same test name at two different levels: from the outside-in (feature), and at a lower level (unit).
+
+> View the source code for this episode [on GitHub](https://github.com/laracasts/birdboard/commit/fdd4a1fab73f57add3105a6c368f32a2eb296e47).
+
+### Note
+
+> tests\Feature\InvitationsTest.php
+
+```php
+/** @test */
+public function a_project_can_invite_a_user()
+{
+    $this->withOutExceptionHandling();
+
+    // Given I have a project
+    $project = ProjectFactory::create();
+
+    // And the owner of the project invites another user
+    $project->invite($newUser = factory(User::class)->create());
+
+    // Then, that new user will have permission to add tasks
+    $this->signIn($newUser);
+
+    $this->post(action('ProjectTasksController@store', $project), $task = ['body' => 'Foo task']);
+
+    $this->assertDatabaseHas('tasks', $task);
+}
+```
+
+> tests\Unit\ProjectTest.php
+
+```php
+/** @test */
+public function it_can_invite_a_user()
+{
+    $project = factory('App\Project')->create();
+    
+    $project->invite($user = factory(\App\User::class)->create());
+
+    $this->assertTrue($project->members->contains($user));
+}
+```
+
+> app\Project.php
+
+```php
+public function invite(User $user)
+{
+    return $this->members()->attach($user);
+}
+
+public function members()
+{
+    return $this->belongsToMany(User::class, 'project_members');
+}
+```
+
+> app\Policies\ProjectPolicy.php
+
+```php
+public function update(User $user, Project $project)
+{
+    return $user->is($project->owner) || $project->members->contains($user);
+}
+```
 
 ## References
 

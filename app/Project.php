@@ -33,30 +33,18 @@ class Project extends Model
         return $this->tasks()->create(compact('body'));
     }
 
-    // public function recordActivity($description)
-    // {
-    //     $this->activity()->create([
-    //         'description' => $description,
-    //         // 'changes' => $this->activityChanges($description),
-    //         'changes' => $this->activityChanges(),
-    //         'project_id' => class_basename($this)==='Project' ? $this->id : $this->project_id
-    //     ]);
-    // }
-
-    // // public function activityChanges($description)
-    // public function activityChanges()
-    // {
-    //     // if ($description === 'updated') {
-    //     if ($this->wasChanged()) {
-    //         return [
-    //             'before' => array_except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
-    //             'after' => array_except($this->getChanges(), 'updated_at')
-    //         ];
-    //     }
-    // }
-
     public function activity()
     {
         return $this->hasMany(Activity::class)->latest();
+    }
+
+    public function invite(User $user)
+    {
+        return $this->members()->attach($user);
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'project_members');
     }
 }
